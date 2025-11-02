@@ -7,8 +7,8 @@ export const clients:Client[]=[
 ];
 
 export const projects:Project[]=[
-{id:'p1',clientId:'c1',title:'Website Development',budget:5000,status:'in-progress',paymentstatus:'unpaid'},
-{id:'p2',clientId:'c2',title:'Mobile App Design',budget:3000,status:'completed',paymentstatus:'paid'},
+{id:'p1',clientId:'c1',title:'Website Development',budget:5000,status:'in-progress',paymentStatus:'unpaid'},
+{id:'p2',clientId:'c2',title:'Mobile App Design',budget:3000,status:'completed',paymentStatus:'paid'},
 ];
 
 export const payments:Payment[]=[
