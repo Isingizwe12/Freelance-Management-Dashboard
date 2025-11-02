@@ -13,7 +13,7 @@ export interface Project{
     title:string;
     budget:number;
     status:ProjectStatus;
-    paymentstatus:PaymentStatus
+    paymentStatus:PaymentStatus
 
 }
 
