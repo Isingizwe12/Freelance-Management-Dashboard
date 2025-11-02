@@ -1,12 +1,7 @@
 import React, { useContext } from "react";
-import { Project } from "../types/models";
 import { AppContext } from "../context/AppContext";
 
-interface Props {
-  projects: Project[];
-}
-
-const ProjectList: React.FC<Props> = ({ projects }) => {
+const ProjectList: React.FC = () => {
   const context = useContext(AppContext);
 
   if (!context) {
@@ -14,13 +9,13 @@ const ProjectList: React.FC<Props> = ({ projects }) => {
   }
 
   const { state, dispatch } = context;
-  const { clients } = state;
+  const { clients, projects } = state;
 
   const markAsPaid = (projectId: string, amount: number) => {
-    // Update project payment status
-    dispatch({ type: "MARK_PROJECT_PAID", payload: { projectId } });
+    const project = projects.find((p) => p.id === projectId);
+    if (!project || project.paymentStatus === "paid") return;
 
-    // Add payment record with current ISO date
+    dispatch({ type: "MARK_PROJECT_PAID", payload: { projectId } });
     dispatch({
       type: "ADD_PAYMENT",
       payload: { projectId, amount, date: new Date().toISOString() },
@@ -47,7 +42,11 @@ const ProjectList: React.FC<Props> = ({ projects }) => {
               </p>
               <p className="text-sm text-gray-500">
                 Payment:{" "}
-                <span className={project.paymentStatus === "paid" ? "text-green-600" : "text-yellow-600"}>
+                <span
+                  className={
+                    project.paymentStatus === "paid" ? "text-green-600" : "text-yellow-600"
+                  }
+                >
                   {project.paymentStatus}
                 </span>
               </p>
@@ -63,12 +62,9 @@ const ProjectList: React.FC<Props> = ({ projects }) => {
                   Mark as Paid
                 </button>
               ) : (
-                <button
-                  disabled
-                  className="px-3 py-1.5 bg-gray-200 text-gray-600 rounded-md cursor-not-allowed"
-                >
+                <span className="px-3 py-1.5 bg-gray-200 text-gray-600 rounded-md cursor-not-allowed">
                   Paid
-                </button>
+                </span>
               )}
             </div>
           </div>

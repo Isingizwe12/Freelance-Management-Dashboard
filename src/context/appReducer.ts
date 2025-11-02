@@ -18,14 +18,16 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       return { ...state, clients: [...state.clients, action.payload] };
     case "ADD_PROJECT":
       return { ...state, projects: [...state.projects, action.payload] };
+
     case "ADD_PAYMENT":
-      return { ...state, payments: [...state.payments, action.payload] };
+     return { ...state, payments: [...state.payments, action.payload] };
+
     case "MARK_PROJECT_PAID":
       return {
         ...state,
         projects: state.projects.map((p) =>
           p.id === action.payload.projectId
-            ? { ...p, paymentstatus: "paid" }
+            ? { ...p, paymentStatus: "paid" }
             : p
         ),
       };
