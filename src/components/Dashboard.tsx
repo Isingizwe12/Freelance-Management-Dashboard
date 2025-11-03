@@ -7,6 +7,7 @@ import DashboardStats from "./DashboardStats";
 const Dashboard: React.FC = () => {
   const context = useContext(AppContext);
   const [filter,setFilter]=useState<"all"| "paid" |"unpaid">("all");
+  const [searchTerm, setSearchTerm] = useState("");
 
   if (!context) {
     return <p className="text-red-500 text-center mt-10">Error: AppContext not found</p>;
@@ -15,10 +16,17 @@ const Dashboard: React.FC = () => {
   const { state } = context;
   const { clients, projects, payments } = state;
 
-  const filteredProjects=state.projects.filter((project)=>{
-    if(filter==="all") return true;
-    return project.paymentStatus===filter;
-  });
+ const filteredProjects = projects.filter((project) => {
+  // Filter by payment status
+  if (filter !== "all" && project.paymentStatus !== filter) return false;
+
+  // Filter by search term
+  const client = clients.find((c) => c.id === project.clientId);
+  const projectMatches = project.title.toLowerCase().includes(searchTerm.toLowerCase());
+  const clientMatches = client?.name.toLowerCase().includes(searchTerm.toLowerCase()) ?? false;
+
+  return projectMatches || clientMatches;
+});
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">
@@ -48,22 +56,34 @@ const Dashboard: React.FC = () => {
      
       {/* Projects Section */}
       <section className="mt-10">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-semibold text-gray-700">Projects</h2>
+       <div className="flex justify-between items-center mb-4">
+  <h2 className="text-2xl font-semibold text-gray-700">Projects</h2>
 
-          {/* ✅ Dropdown filter */}
-          <select
-            value={filter}
-            onChange={(e) => setFilter(e.target.value as "all" | "paid" | "unpaid")}
-            className="border rounded-md p-2"
-          >
-            <option value="all">All</option>
-            <option value="paid">Paid</option>
-            <option value="unpaid">Unpaid</option>
-          </select>
-        </div>
+  <div className="flex gap-2">
+    {/* Search Input */}
+    <input
+      type="text"
+      placeholder="Search by project or client..."
+      value={searchTerm}
+      onChange={(e) => setSearchTerm(e.target.value)}
+      className="border rounded-md p-2"
+    />
 
-        {/* ✅ Pass filtered projects */}
+    {/* Payment Filter Dropdown */}
+    <select
+      value={filter}
+      onChange={(e) => setFilter(e.target.value as "all" | "paid" | "unpaid")}
+      className="border rounded-md p-2"
+    >
+      <option value="all">All</option>
+      <option value="paid">Paid</option>
+      <option value="unpaid">Unpaid</option>
+    </select>
+  </div>
+</div>
+
+
+        {/*  Pass filtered projects */}
         <ProjectList projects={filteredProjects} />
       </section>
     </div>
