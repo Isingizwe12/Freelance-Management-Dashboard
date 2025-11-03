@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext,useState} from "react";
 import { AppContext } from "../context/AppContext";
 import ClientCard from "./ClientCard";
 import ProjectList from "./ProjectList";
@@ -6,6 +6,7 @@ import DashboardStats from "./DashboardStats";
 
 const Dashboard: React.FC = () => {
   const context = useContext(AppContext);
+  const [filter,setFilter]=useState<"all"| "paid" |"unpaid">("all");
 
   if (!context) {
     return <p className="text-red-500 text-center mt-10">Error: AppContext not found</p>;
@@ -13,6 +14,11 @@ const Dashboard: React.FC = () => {
 
   const { state } = context;
   const { clients, projects, payments } = state;
+
+  const filteredProjects=state.projects.filter((project)=>{
+    if(filter==="all") return true;
+    return project.paymentStatus===filter;
+  });
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">
@@ -39,10 +45,26 @@ const Dashboard: React.FC = () => {
         </div>
       </section>
 
+     
       {/* Projects Section */}
       <section className="mt-10">
-        <h2 className="text-2xl font-semibold text-gray-700 mb-4">Projects</h2>
-        <ProjectList/>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-semibold text-gray-700">Projects</h2>
+
+          {/* ✅ Dropdown filter */}
+          <select
+            value={filter}
+            onChange={(e) => setFilter(e.target.value as "all" | "paid" | "unpaid")}
+            className="border rounded-md p-2"
+          >
+            <option value="all">All</option>
+            <option value="paid">Paid</option>
+            <option value="unpaid">Unpaid</option>
+          </select>
+        </div>
+
+        {/* ✅ Pass filtered projects */}
+        <ProjectList projects={filteredProjects} />
       </section>
     </div>
   );

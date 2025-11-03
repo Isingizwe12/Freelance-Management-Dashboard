@@ -1,7 +1,12 @@
 import React, { useContext } from "react";
 import { AppContext } from "../context/AppContext";
+import { Project } from "../types/models";
 
-const ProjectList: React.FC = () => {
+interface ProjectListProps {
+  projects: Project[];
+}
+
+const ProjectList: React.FC<ProjectListProps> = ({ projects }) => {
   const context = useContext(AppContext);
 
   if (!context) {
@@ -9,7 +14,7 @@ const ProjectList: React.FC = () => {
   }
 
   const { state, dispatch } = context;
-  const { clients, projects } = state;
+  const { clients } = state;
 
   const markAsPaid = (projectId: string, amount: number) => {
     const project = projects.find((p) => p.id === projectId);
@@ -43,9 +48,7 @@ const ProjectList: React.FC = () => {
               <p className="text-sm text-gray-500">
                 Payment:{" "}
                 <span
-                  className={
-                    project.paymentStatus === "paid" ? "text-green-600" : "text-yellow-600"
-                  }
+                  className={project.paymentStatus === "paid" ? "text-green-600" : "text-yellow-600"}
                 >
                   {project.paymentStatus}
                 </span>
